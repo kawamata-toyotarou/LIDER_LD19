@@ -1,9 +1,16 @@
 import serial
 
-with serial.Serial("COM11", 230400, timeout=1) as port: #  COM5で230400baudで読み取り時間は1秒
-    data = port.read(32)      # port の read という機能を使って、32バイト読み取る
+with serial.Serial("COM11", 230400, timeout=1) as port: #  COM11で230400baudで読み取り時間は1秒
+    data = port.read(256)          # port の read という機能を使って、32バイト読み取る
     print(len(data), "バイト")
-    print(data.hex(" "))      #hexは各バイトの間に空白を1個入れる設定
+    print(data.hex(" "))           # hexは各バイトの間に空白を1個入れる設定
+    start = data.find(b"\x54\x2c") # 54と2cがこの順に連続する2バイトを渡している 54はパケットの開始を示す固定値 x2cは00101100 001は種類1、01100は測定件数12を表している
+    print(start)                   # その場所を表示
+    if start >= 0 and len(data) >= start + 47:  # startから47バイト分そろっているか確認
+        packet = data[start:start + 47]         # startからstart + 47バイト目を格納
+        distance_bytes = packet[6:8]             
+        distance_mm = int.from_bytes(distance_bytes, byteorder="little") # int.from_bytesでその2バイトを整数に byteorder="littleは、最初のバイトが1の位で、次のバイトが256の位という指定 LD19ではそれでいい
+        print("1点目の距離", distance_mm, "mm")
 
 print("ポートを閉じました")
 

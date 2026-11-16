@@ -1,5 +1,0 @@
-#LIDER_LD19
-LIDER_LD19を動かすリポジトリ
-##やったこと
-1.py -m pip install pyserialでパイソンにシリアル通信の道具を追加
-2.py -m serial.tools.list_portsでWindowsに見えているシリアルポートを一に  して確認
